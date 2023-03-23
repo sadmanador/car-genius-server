@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 const cors = require("cors");
 require("dotenv").config();
@@ -21,6 +21,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const servicesCollection = client.db("car-genius").collection("services");
+    const ordersCollection = client.db("car-genius").collection("orders");
     app.post("/services", async (req, res) => {
       const services = req.body;
       const result = await servicesCollection.insertOne(services);
@@ -36,8 +37,14 @@ async function run() {
 
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
-    //   const query = {_id: id}
-      const result = await servicesCollection.findOne({_id: ObjectId(id)});
+      //   const query = {_id: id}
+      const result = await servicesCollection.findOne({ _id: ObjectId(id) });
+      res.send(result);
+    });
+
+    app.post("/orders", async (req, res) => {
+      const orders = req.body;
+      const result = await ordersCollection.insertOne(orders);
       res.send(result);
     });
   } finally {
