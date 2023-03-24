@@ -37,9 +37,20 @@ async function run() {
 
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
-      //   const query = {_id: id}
       const result = await servicesCollection.findOne({ _id: ObjectId(id) });
       res.send(result);
+    });
+
+    app.get('/orders', async (req, res) => {
+    let query = {};
+
+    if(req.query.email){
+      query = { email: req.query.email}
+    }
+
+    const cursor = ordersCollection.find(query);
+    const result = await cursor.toArray();
+    res.send(result);
     });
 
     app.post("/orders", async (req, res) => {
