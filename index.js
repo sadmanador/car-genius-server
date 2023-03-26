@@ -41,16 +41,16 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/orders', async (req, res) => {
-    let query = {};
+    app.get("/orders", async (req, res) => {
+      let query = {};
 
-    if(req.query.email){
-      query = { email: req.query.email}
-    }
+      if (req.query.email) {
+        query = { email: req.query.email };
+      }
 
-    const cursor = ordersCollection.find(query);
-    const result = await cursor.toArray();
-    res.send(result);
+      const cursor = ordersCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
     });
 
     app.post("/orders", async (req, res) => {
@@ -59,11 +59,24 @@ async function run() {
       res.send(result);
     });
 
-    app.delete('/orders/:id', async (req, res) => {
-    const id = req.params.id;
-    const query = { _id: ObjectId(id) };
-    const result = await ordersCollection.deleteOne(query);
-    res.send(result);
+    app.patch("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const status = req.body.status;
+      const query = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status: status,
+        },
+      };
+      const result = await ordersCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+    app.delete("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(query);
+      res.send(result);
     });
   } finally {
   }
